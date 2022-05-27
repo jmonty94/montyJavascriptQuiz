@@ -1,16 +1,22 @@
-const quizContainer = document.getElementById('quiz');
+const quiz = document.getElementById('quiz');
 const startBtn = document.getElementById('start');
 const submitBtn = document.getElementById('submit');
 const resultsContainer = document.getElementById('results');
 const questionText = document.getElementById('question');
-// var time = question.length * 15
-// var timerEl = document.querySelector("time")
+const init = document.getElementById("init")
 const feedbackEl = document.getElementById('feedback')
+const currentScore = document.getElementById('currentScore')
+const quizContainer = document.getElementById('quizContainer')
+const finalScoreForm = document.createElement('form')
+const finalScoreInput = document.createElement('input')
+const formDesc = document.createElement('Label')
+const finalScoreBtn = document.createElement('input')
+
 let currentQuestionIndex = 0;
 let score = 0
 const removeChilds = () => {
-    while (quizContainer.lastChild) {
-        quizContainer.removeChild(quizContainer.lastChild);
+    while (quiz.lastChild) {
+        quiz.removeChild(quiz.lastChild);
     }
 };
 const myQuestions = [
@@ -116,52 +122,58 @@ const myQuestions = [
         correctAnswer: "c"
     }
 ];
-function next() {
-    currentQuestionIndex++;
-    console.log(currentQuestionIndex);
-}
+// function next() {
+//     currentQuestionIndex++;
+// }
 startBtn.addEventListener("click", start);
 function start() {
-    console.log("I'm hit");
+    init.removeChild(startBtn)
     getquestion();
 }
 
 function getquestion() {
+    currentScore.textContent = score
     const currentAnswers = myQuestions[currentQuestionIndex].answers
     const corAns = currentAnswers[myQuestions[currentQuestionIndex].correctAnswer]
     questionText.textContent = myQuestions[currentQuestionIndex].question;
+
     removeChilds()
     Object.values(currentAnswers).forEach(value => {
-        console.log(value);
         let btn = document.createElement('button');
         btn.innerHTML = value;
-        quizContainer.appendChild(btn);
+        quiz.appendChild(btn);
         textContent = myQuestions[currentAnswers];
         btn.addEventListener('click', userAnswer);
         function userAnswer(event) {
-            console.log('im hit');
-            console.log(event.target);
             currentQuestionIndex++;
+
             if (btn.innerText === corAns) {
                 feedbackEl.textContent = 'Correct';
-                if (currentQuestionIndex < myQuestions.length) {
-                    getquestion();
-                }
-                else {
-
-                }
+                score++
             }
             else {
                 feedbackEl.textContent = "Incorrect";
-                if (currentQuestionIndex < myQuestions.length) {
-                    getquestion();
+            }
+            if (currentQuestionIndex >= myQuestions.length) {
+                console.log('im hit');
+
+                while (quizContainer.lastChild) {
+                    quizContainer.removeChild(quizContainer.lastChild);
                 }
-                else {
-
-                }
-            };
-
-        };
-
+                questionText.textContent = ("Congratulations you got " + score + " out of " + 10)
+                quizContainer.appendChild(finalScoreForm)
+                finalScoreForm.appendChild(formDesc)
+                finalScoreForm.appendChild(finalScoreInput)
+                finalScoreForm.appendChild(finalScoreBtn)
+                finalScoreInput.setAttribute('id', "initials")
+                formDesc.setAttribute("for", initials)
+                formDesc.innerHTML = "Add your initials to our Leaderboard!"
+                finalScoreBtn.setAttribute('type', 'submit')
+                return
+            } else {
+                getquestion()
+            }
+        }
     });
-}
+
+};

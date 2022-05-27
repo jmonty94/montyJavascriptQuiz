@@ -1,28 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" src="/Assets/css/style.css">
-    <title>Monty's Javascript Quiz</title>  
+    <title>Monty's Javascript Quiz</title>
 </head>
+
 <body>
     <nav>
-        <h3 id="highScores">View High Scores</h3>
+        <button>
+            <h3 id="highScores">View High Scores</h3>
+        </button>
         <h3 id="timer">Time: </h3>
     </nav>
     <header>
         <h1 id="question">Welcome to Monty's Javascript Quiz</h1>
-    </header>
-    <main id="quiz">
-    </main>
-    <div id="feedback" class="feedback hide"></div>
-    <div>
+        <main id="quizContainer">
+            <article id="quiz">
+                <h3 id="feedback"></h3>
+            </article>
+            <div id="init">
+                <button id="start">
+                    <h2>start</h2>
+                </button>
+            </div>
+            <div id="results">
+                <h2>Current score: <span id=currentScore></span> </h2>
+            </div>
+        </main>
 
-    <button id="start">start</button>
-    </div>
-    <div id="results">Current score</div>
-    <script src= "Assets/js/script.js"></script>
+    </header>
+
+    <script src="Assets/js/script.js"></script>
 </body>
+
 </html>

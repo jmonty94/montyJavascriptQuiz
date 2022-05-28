@@ -10,10 +10,12 @@ const quizContainer = document.getElementById('quizContainer')
 const finalScoreForm = document.createElement('form')
 const finalScoreInput = document.createElement('input')
 const formDesc = document.createElement('Label')
-const finalScoreBtn = document.createElement('input')
-
+const finalScoreBtn = document.createElement('button')
+const timerEl = document.getElementById('timer')
+let timer = 120
 let currentQuestionIndex = 0;
 let score = 0
+let timerFunc
 const removeChilds = () => {
     while (quiz.lastChild) {
         quiz.removeChild(quiz.lastChild);
@@ -122,21 +124,25 @@ const myQuestions = [
         correctAnswer: "c"
     }
 ];
-// function next() {
-//     currentQuestionIndex++;
-// }
 startBtn.addEventListener("click", start);
 function start() {
+    timerFunc = setInterval(
+        function () {
+            timer--
+            timerEl.textContent = "Time remaining: " + timer;
+            if (timer <= 0) {
+                endQuiz()
+            }
+        }, 1000
+    )
     init.removeChild(startBtn)
     getquestion();
 }
-
 function getquestion() {
     currentScore.textContent = score
     const currentAnswers = myQuestions[currentQuestionIndex].answers
     const corAns = currentAnswers[myQuestions[currentQuestionIndex].correctAnswer]
     questionText.textContent = myQuestions[currentQuestionIndex].question;
-
     removeChilds()
     Object.values(currentAnswers).forEach(value => {
         let btn = document.createElement('button');
@@ -146,34 +152,47 @@ function getquestion() {
         btn.addEventListener('click', userAnswer);
         function userAnswer(event) {
             currentQuestionIndex++;
-
             if (btn.innerText === corAns) {
                 feedbackEl.textContent = 'Correct';
                 score++
             }
             else {
                 feedbackEl.textContent = "Incorrect";
-            }
+                timer= timer - 10
+            };
             if (currentQuestionIndex >= myQuestions.length) {
-                console.log('im hit');
-
-                while (quizContainer.lastChild) {
-                    quizContainer.removeChild(quizContainer.lastChild);
-                }
-                questionText.textContent = ("Congratulations you got " + score + " out of " + 10)
-                quizContainer.appendChild(finalScoreForm)
-                finalScoreForm.appendChild(formDesc)
-                finalScoreForm.appendChild(finalScoreInput)
-                finalScoreForm.appendChild(finalScoreBtn)
-                finalScoreInput.setAttribute('id', "initials")
-                formDesc.setAttribute("for", initials)
-                formDesc.innerHTML = "Add your initials to our Leaderboard!"
-                finalScoreBtn.setAttribute('type', 'submit')
+                endQuiz()
                 return
             } else {
                 getquestion()
-            }
-        }
+            };
+        };
     });
-
 };
+function endQuiz() {
+    while (quizContainer.lastChild) {
+        quizContainer.removeChild(quizContainer.lastChild);
+    }
+    clearInterval(timerFunc)
+    questionText.textContent = ("Congratulations you got " + (score + timer))
+    // quizContainer.appendChild(finalScoreForm)
+    quizContainer.appendChild(formDesc)
+    quizContainer.appendChild(finalScoreInput)
+    quizContainer.appendChild(finalScoreBtn)
+    finalScoreInput.setAttribute('id', "initials")
+    formDesc.setAttribute("for", initials)
+    formDesc.textContent = "Add your initials to our Leaderboard!"
+    finalScoreBtn.addEventListener('click', highScore)
+    let buttonText = document.createElement("p")
+    buttonText.textContent = "Submit"
+    finalScoreBtn.appendChild(buttonText)
+};
+function highScore() {
+    let userHighScore = [].JSON.parse(localStorage.getItem(highScores))
+    userHighScore.push({
+        userNameInput: finalScoreInput,
+        userScore: score + timer,
+    })
+    console.log(userHighScore);
+    localStorage.setItem('highScores', JSON.stringify(userHighScore))
+}

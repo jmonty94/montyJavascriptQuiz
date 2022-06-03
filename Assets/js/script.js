@@ -12,6 +12,7 @@ const finalScoreInput = document.createElement('input')
 const formDesc = document.createElement('Label')
 const finalScoreBtn = document.createElement('button')
 const timerEl = document.getElementById('timer')
+const leaderboard = document.getElementById('highScores')
 let timer = 120
 let currentQuestionIndex = 0;
 let score = 0
@@ -182,17 +183,47 @@ function endQuiz() {
     finalScoreInput.setAttribute('id', "initials")
     formDesc.setAttribute("for", initials)
     formDesc.textContent = "Add your initials to our Leaderboard!"
-    finalScoreBtn.addEventListener('click', highScore)
+    finalScoreBtn.addEventListener('click', addHighScore)
     let buttonText = document.createElement("p")
     buttonText.textContent = "Submit"
     finalScoreBtn.appendChild(buttonText)
 };
-function highScore() {
-    let userHighScore = [].JSON.parse(localStorage.getItem(highScores))
+function addHighScore() {
+    let userHighScore = JSON.parse(localStorage.getItem("highScores"))
+    if (userHighScore === null) {
+        userHighScore = []
+    }
     userHighScore.push({
-        userNameInput: finalScoreInput,
+        userNameInput: finalScoreInput.value,
         userScore: score + timer,
     })
-    console.log(userHighScore);
+    console.log(finalScoreInput.value);
     localStorage.setItem('highScores', JSON.stringify(userHighScore))
+}
+leaderboard.addEventListener("click", displayLeaderboard);
+
+function displayLeaderboard() {
+    console.log('im hit');
+    while (document.body.lastChild) {
+        document.body.removeChild(document.body.lastChild);
+    }
+    let olEl = document.createElement('ol')
+    let leaderboardText = document.createElement('h2')
+    leaderboardText.textContent = "Current Leaderboard"
+    document.body.appendChild(olEl)
+    olEl.appendChild(leaderboardText)
+    let storedScores = JSON.parse(localStorage.getItem("highScores"))
+    console.log(storedScores);
+    Object.entries(storedScores).forEach(([key, value]) => {
+        Object.entries(storedScores).sort(function (a,b) {
+            console.log(a.userScore - b.userScore);
+        })
+        console.log(value.userNameInput);
+        console.log(value.userScore);
+        let liEl = document.createElement("li")
+        liEl.textContent = (value.userNameInput + value.userScore)
+        olEl.appendChild(liEl)
+        
+    })
+    
 }
